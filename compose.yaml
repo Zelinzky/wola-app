@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  # Our Postgres database
+  postgres: # The service will be named db.
+    image: postgres # The postgres image will be used
+    restart: always # Always try to restart if this stops running
+    environment: # Provide environment variables
+      POSTGRES_USER: tetsukabura # POSTGRES_USER env var w/ value baloo
+      POSTGRES_PASSWORD: monsterHunter
+      POSTGRES_DB: wola
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports: # Expose ports so that apps not running via docker compose can connect to them.
+      - "5432:5432" # format here is "port on our machine":"port on container"
+    volumes:
+      - ./_volumes/postgres:/var/lib/postgresql/data:z # :z is for working around selinux to retag the context of the mounted folder
+  redis:
+    image: redis/redis-stack
+    restart: always
+    environment:
+      REDIS_ARGS: --save 20 1
+    ports:
+      - '6379:6379'
+      - '8001:8001'
+    volumes:
+      - ./_volumes/redis:/data:z
